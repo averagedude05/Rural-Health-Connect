@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column,CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm";
-import { PatientProfile } from "@/modules/patient/entities/patient.entity.ts";
-import { DoctorProfile } from "@/modules/doctor/entities/doctor.entity.ts";
-import { TechnicianProfile } from "@/modules/techinician/entities/technician.entity.ts";
+import { PatientProfile } from "@/modules/patient/entities/patient.entity";
+import { DoctorProfile } from "@/modules/doctor/entities/doctor.entity";
+import { TechnicianProfile } from "@/modules/technician/entities/technician.entity";
 @Entity({ name: "lab_requests" })
 export class LabRequest {
 
@@ -20,7 +20,7 @@ export class LabRequest {
     @Column()
     test_name!:string;
 
-    @Column()
+    @Column({ type: "enum",enum: ["REQUESTED", "ASSIGNED", "IN_PROGRESS", "COMPLETED", "CANCELLED"],default: "REQUESTED"})
     status!:string;
 
     @CreateDateColumn()
