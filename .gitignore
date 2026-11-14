@@ -402,7 +402,8 @@ dist
 .webpack
 .serverless/**/*.zip
 
-//Project modules
+#extra modules for testing
+
 /src/modules/appointments/
 /src/modules/clinic/
 /src/modules/doctor/
