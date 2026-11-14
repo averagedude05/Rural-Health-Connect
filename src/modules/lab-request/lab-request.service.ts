@@ -6,6 +6,7 @@ import { PatientProfile } from "@/modules/patient/entities/patient.entity";
 import { DoctorProfile } from "@/modules/doctor/entities/doctor.entity";
 import { TechnicianProfile } from "@/modules/technician/entities/technician.entity";
 import { CreateLabRequestDto, UpdateLabRequestDto } from "./dto/lab-request.dto";
+import { error } from "console";
 
 
 
@@ -32,7 +33,7 @@ async getAllRequests(){
 
 async getLabRequest( id:string){
     try{
-        const requests=this.labrequestRepository.findOne({where: { id: id },relations: { patient: true, doctor: true, technician: true }});
+        const requests=this.labrequestRepository.findOne({where: { id: id }});
         if(!requests){
             throw new NotFoundException("Request not found");
         }
@@ -55,8 +56,8 @@ async createLabRequest(dto:CreateLabRequestDto, doctorId:string){
         throw new NotFoundException("Doctor not found");
     }
     const responce=this.labrequestRepository.create({
-        patient:patient,//left side entity er this record of labrequest and the right one is the one found from the db 
-        doctor:doctor,
+        patient_id: dto.patient_id,//left side entity er this record of labrequest and the right one is the one found from the db 
+        doctor_id:doctorId,
         test_name:dto.test_name
     })
     return await this.labrequestRepository.save(responce);
@@ -67,7 +68,6 @@ async createLabRequest(dto:CreateLabRequestDto, doctorId:string){
     }
     async updateLabRequest(id: string, dto: UpdateLabRequestDto){
         try{
-            const updateData: any = {};
             const updateLabRequest = await this.labrequestRepository.findOne({ where: { id:id } });
             if (!updateLabRequest) {
                 throw new NotFoundException("Lab request with ID not found");
@@ -77,13 +77,8 @@ async createLabRequest(dto:CreateLabRequestDto, doctorId:string){
                 if(!technician){
                 throw new NotFoundException("Techinician not found");
             }
-                updateData.technician = technician;
             }
-            if(dto.status){
-                 updateData.status = dto.status;
-            }
-           // const {requested_at, ...rest}=updateLabRequest;
-            return await this.labrequestRepository.update({id:id},updateData);
+            return await this.labrequestRepository.update({id:id},dto);
         }
         catch(error){
             throw error;

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsOptional } from "class-validator";
+import { IsNotEmpty, IsString, IsOptional, IsIn } from "class-validator";
 
 export class CreateLabRequestDto {
     @IsNotEmpty()
@@ -17,7 +17,7 @@ export class UpdateLabRequestDto {
     technician_id?: string;
 
     @IsOptional()
-    @IsString()
+    @IsIn(["REQUESTED", "ASSIGNED", "IN_PROGRESS", "COMPLETED", "CANCELLED"])
     @IsNotEmpty()
     status?: string;
 }

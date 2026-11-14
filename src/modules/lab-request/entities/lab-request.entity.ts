@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column,CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column,CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from "typeorm";
 import { PatientProfile } from "@/modules/patient/entities/patient.entity";
 import { DoctorProfile } from "@/modules/doctor/entities/doctor.entity";
 import { TechnicianProfile } from "@/modules/technician/entities/technician.entity";
@@ -8,13 +8,25 @@ export class LabRequest {
     @PrimaryGeneratedColumn("uuid")
     id!:string;
 
+    @Column({type:"uuid"})
+    patient_id!:string;
+
     @ManyToOne(() => PatientProfile)
+    @JoinColumn({name:"patient_id"})
     patient!:PatientProfile;
 
+    @Column({type:"uuid"})
+    doctor_id!:string;
+
     @ManyToOne(() => DoctorProfile)
+    @JoinColumn({name:"doctor_id"})
     doctor!:DoctorProfile;
 
+    @Column({type:"uuid"})
+    technician_id!:string;
+
     @ManyToOne(() => TechnicianProfile, { nullable: true })
+    @JoinColumn({name:"technician_id"})
     technician?:TechnicianProfile ;
 
     @Column()
