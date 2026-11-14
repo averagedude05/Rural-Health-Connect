@@ -84,7 +84,7 @@ export class CreateRuralHealthConnectTables1794594703000 implements MigrationInt
         columns: [
           {
             name: "id",
-           type: "uuid",
+            type: "uuid",
             isPrimary: true,
             generationStrategy: "uuid",
             default: "uuid_generate_v4()",
@@ -236,19 +236,26 @@ export class CreateRuralHealthConnectTables1794594703000 implements MigrationInt
         columns: [
           {
             name: "id",
-           type: "uuid",
+            type: "uuid",
             isPrimary: true,
             generationStrategy: "uuid",
             default: "uuid_generate_v4()",
           },
           {
             name: "user_id",
-           type: "uuid",
+            type: "uuid",
             isNullable: false,
             isUnique: true,
           },
-          { name: "clinic_id",type: "uuid", isNullable: false },
+          { name: "clinic_id", type: "uuid", isNullable: false },
           { name: "name", type: "varchar", length: "160", isNullable: false },
+          { name: "email", type: "varchar", length: "160", isNullable: false },
+          { name: "age", type: "int", isNullable: false },
+          { name: "phone", type: "varchar", length: "11", isNullable: false },
+          { name: "address", type: "text", isNullable: true },
+        ],
+        uniques: [
+          new TableUnique({ name: "UQ_lab_technician_profiles_email", columnNames: ["email"] }),
         ],
         foreignKeys: [
           new TableForeignKey({
@@ -268,7 +275,6 @@ export class CreateRuralHealthConnectTables1794594703000 implements MigrationInt
         ],
       }),
     );
-
     await queryRunner.createTable(
       new Table({
         name: "doctor_availabilities",
