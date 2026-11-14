@@ -20,22 +20,22 @@ export class TechnicianController {
   }
 
   @Get(":id")
-  async getTechnician(@Param("id") id: string) {
+  async getTechnician(@Param("id") id:string) {
     return await this.TechnicianService.getTechnician(id);
   }
 
   @Post(":userId")
-  async createTechnician(@Param("userId") userId: string,@Body() dto: CreateTechnicianDto) {
+  async createTechnician(@Param("userId") userId:string,@Body() dto: CreateTechnicianDto) {
     return await this.TechnicianService.createTechnician(dto, userId);
   }
 
   @Patch(":id")
-  async updateTechnician(@Param("id") id: string,@Body() dto: UpdateTechnicianDto,) {
+  async updateTechnician(@Param("id") id:string,@Body() dto: UpdateTechnicianDto,) {
     return await this.TechnicianService.updateTechnician(id, dto);
   }
 
   @Delete(":id")
-  async deleteTechnician(@Param("id") id: string) {
+  async deleteTechnician(@Param("id") id:string) {
     return await this.TechnicianService.deleteTechnician(id);
   }
 }
