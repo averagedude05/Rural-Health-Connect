@@ -12,7 +12,7 @@ import { CreateLabRequestDto, UpdateLabRequestDto } from "./dto/lab-request.dto"
 
 
 @Injectable()
-export class labrequestService{
+export class LabRequestService{
     constructor(
     @InjectRepository(LabRequest) private readonly labrequestRepository:Repository<LabRequest>,
     @InjectRepository(PatientProfile) private readonly patientRepository:Repository<PatientProfile>,
@@ -22,7 +22,7 @@ export class labrequestService{
 
 async getAllRequests(){
     try{
-        const allrequests=await this.labrequestRepository.find({relations:{patient:true,doctor:true, technician:true}})
+        const allrequests=await this.labrequestRepository.find()
         return allrequests;
     }
     catch(error){

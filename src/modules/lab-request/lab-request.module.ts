@@ -5,11 +5,11 @@ import { PatientProfile } from "@/modules/patient/entities/patient.entity";
 import { DoctorProfile } from "@/modules/doctor/entities/doctor.entity";
 import { TechnicianProfile } from "@/modules/technician/entities/technician.entity";
 import { LabRequestController } from "./lab-request.controller";
-import { labrequestService } from "./lab-request.service";
+import { LabRequestService } from "./lab-request.service";
 @Module({
     imports: [TypeOrmModule.forFeature([LabRequest,PatientProfile,DoctorProfile,TechnicianProfile])],
     controllers: [LabRequestController],
-    providers: [labrequestService],
-    exports: [labrequestService]
+    providers: [LabRequestService],
+    exports: [LabRequestService]
 })
 export class LabRequestModule {}

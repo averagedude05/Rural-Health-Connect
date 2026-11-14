@@ -8,42 +8,38 @@ import {
     Post,
 } from "@nestjs/common";
 
-import { labrequestService } from "./lab-request.service";
-import {
-    CreateLabRequestDto,
-    UpdateLabRequestDto
-} from "./dto/lab-request.dto";
+import { LabRequestService } from "./lab-request.service";
+import {CreateLabRequestDto,UpdateLabRequestDto} from "./dto/lab-request.dto";
 
 @Controller("lab-requests")
 export class LabRequestController {
-
-    constructor(private readonly labRequestService: labrequestService) {}
+    constructor(private readonly LabRequestService: LabRequestService) {}
 
     @Get()
     async getAllLabRequests() {
-        return await this.labRequestService.getAllRequests();
+        return await this.LabRequestService.getAllRequests();
     }
 
     @Get(":id")
     async getLabRequest(@Param("id") id: string) {
-        return await this.labRequestService.getLabRequest(id);
+        return await this.LabRequestService.getLabRequest(id);
     }
     
 
     //needs update
-    @Post()
-    async createLabRequest(@Body() dto: CreateLabRequestDto) {
-        return await this.labRequestService.createLabRequest(dto,"123");
+    @Post(":doctorId")
+    async createLabRequest(@Param("doctorId") doctorId:string,@Body() dto: CreateLabRequestDto) {
+        return await this.LabRequestService.createLabRequest(dto,doctorId);
     }
 
     @Patch(":id")
     async updateLabRequest(@Param("id") id: string, @Body() dto: UpdateLabRequestDto
     ) {
-        return await this.labRequestService.updateLabRequest(id, dto);
+        return await this.LabRequestService.updateLabRequest(id, dto);
     }
 
     @Delete(":id")
     async deleteLabRequest(@Param("id") id: string) {
-        return await this.labRequestService.deleteRequest(id);
+        return await this.LabRequestService.deleteRequest(id);
     }
 }
