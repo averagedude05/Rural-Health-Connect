@@ -6,7 +6,7 @@ import { PatientProfile } from "@/modules/patient/entities/patient.entity";
 import { DoctorProfile } from "@/modules/doctor/entities/doctor.entity";
 import { TechnicianProfile } from "@/modules/technician/entities/technician.entity";
 import { CreateLabRequestDto, UpdateLabRequestDto } from "./dto/lab-request.dto";
-import { error } from "console";
+
 
 
 
@@ -56,7 +56,7 @@ async createLabRequest(dto:CreateLabRequestDto, doctorId:string){
         throw new NotFoundException("Doctor not found");
     }
     const responce=this.labrequestRepository.create({
-        patient_id: dto.patient_id,//left side entity er this record of labrequest and the right one is the one found from the db 
+        patient_id: dto.patient_id,//left side entity er now(new) record of labrequest and the right one is the one found from the db 
         doctor_id:doctorId,
         test_name:dto.test_name
     })
