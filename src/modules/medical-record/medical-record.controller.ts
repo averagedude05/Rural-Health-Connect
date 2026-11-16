@@ -21,7 +21,7 @@ export class MedicalRecordController {
 
     @Get()
     @UseGuards(JwtGuard, RolesGuard)
-    @Roles(Role.ADMIN, Role.DOCTOR)
+    @Roles(Role.CLINIC_ADMIN, Role.DOCTOR)
     async getAllRecords() {
         return await this.medicalRecordService.getAllRecords();
     }
@@ -48,7 +48,7 @@ export class MedicalRecordController {
     }
 
     @UseGuards(JwtGuard, RolesGuard)
-    @Roles(Role.ADMIN)
+    @Roles(Role.CLINIC_ADMIN)
     @Delete(":id")
     async deleteRecord(@Param("id") id: string) {
         return await this.medicalRecordService.deleteRecord(id);

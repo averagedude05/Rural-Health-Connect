@@ -23,14 +23,14 @@ export class LabRequestController {
 
     @Get()
     @UseGuards(JwtGuard, RolesGuard)
-    @Roles(Role.ADMIN, Role.DOCTOR, Role.LAB_TECHNICIAN)
+    @Roles(Role.CLINIC_ADMIN, Role.DOCTOR, Role.LAB_TECHNICIAN)
     async getAllLabRequests() {
         return await this.LabRequestService.getAllRequests();
     }
 
     @Get(":id")
     @UseGuards(JwtGuard, RolesGuard)
-    @Roles(Role.ADMIN, Role.DOCTOR, Role.LAB_TECHNICIAN)
+    @Roles(Role.CLINIC_ADMIN, Role.DOCTOR, Role.LAB_TECHNICIAN)
     async getLabRequest(@Param("id") id: string) {
         return await this.LabRequestService.getLabRequest(id);
     }
@@ -44,13 +44,15 @@ export class LabRequestController {
     }
 
     @Patch(":id")
+    @UseGuards(JwtGuard, RolesGuard)
+    @Roles(Role.DOCTOR)
     async updateLabRequest(@Param("id") id: string, @Body() dto: UpdateLabRequestDto,@Req() req:any) {//@Req() req
-        return await this.LabRequestService.updateLabRequest(id, dto,req.user.id, req.user.role);
+        return await this.LabRequestService.updateLabRequest(id, dto,req.user.id, req.user.roles);
     }
 
     @Delete(":id")
     @UseGuards(JwtGuard, RolesGuard)
-    @Roles(Role.ADMIN)
+    @Roles(Role.CLINIC_ADMIN)
     async deleteLabRequest(@Param("id") id: string) {
         return await this.LabRequestService.deleteRequest(id);
     }

@@ -6,6 +6,7 @@ import { PatientProfile } from "@/modules/patient/entities/patient.entity";
 import { DoctorProfile } from "@/modules/doctor/entities/doctor.entity";
 import { TechnicianProfile } from "@/modules/technician/entities/technician.entity";
 import { CreateLabRequestDto, UpdateLabRequestDto } from "./dto/lab-request.dto";
+import { Role } from "@/src/common/enums/role.enum";
 
 
 
@@ -67,13 +68,13 @@ async createLabRequest(dto:CreateLabRequestDto, doctorId:string){
         throw error;
     }
     }
-    async updateLabRequest(id: string, dto: UpdateLabRequestDto, reqid: string, role: string){
+    async updateLabRequest(id: string, dto: UpdateLabRequestDto, reqid: string, roles: Role[]){
         try{
             const updateLabRequest = await this.labrequestRepository.findOne({ where: { id:id } });
             if (!updateLabRequest) {
                 throw new NotFoundException("Lab request with ID not found");
             }
-            if (role === "DOCTOR") {
+            if (roles.includes(Role.DOCTOR)) {
                 if ( updateLabRequest.doctor_id !== reqid) {
                     throw new ForbiddenException("Cancel only created request");
                 }
@@ -81,7 +82,7 @@ async createLabRequest(dto:CreateLabRequestDto, doctorId:string){
                     throw new ForbiddenException("Only cancel is allowed");
                 }
             }
-            else if (role === "ADMIN"||role==="LAB_TECHNICIAN") {
+            else if (roles.includes(Role.CLINIC_ADMIN) || roles.includes(Role.LAB_TECHNICIAN)) {
                 if (dto.status === "CANCELLED") {
                     throw new ForbiddenException("Only doctors can cancel");
                 }
