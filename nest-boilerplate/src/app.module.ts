@@ -9,6 +9,7 @@ import { BullModule } from "@nestjs/bull";
 import { DoctorsModule } from "@/modules/doctors/doctors.module";
 import { AuthModule } from "@/modules/auth/auth.module";
 import { PrescriptionsModule } from "@/modules/prescriptions/prescriptions.module";
+import { LabRequestsModule } from "@/modules/lab-requests/lab-requests.module";
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { PrescriptionsModule } from "@/modules/prescriptions/prescriptions.modul
     AuthModule,
     DoctorsModule,
     PrescriptionsModule,
+    LabRequestsModule,
 
     ConfigModule.forRoot({
       isGlobal: true,
