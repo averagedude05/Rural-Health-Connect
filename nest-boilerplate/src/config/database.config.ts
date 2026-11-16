@@ -5,7 +5,7 @@ import {
 } from "typeorm";
 import { camelCase, snakeCase } from "typeorm/util/StringUtils";
 import * as dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ path: "../.env" });
 
 /**
  * Snake naming will be used in database operations

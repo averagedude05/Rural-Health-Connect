@@ -2,7 +2,7 @@ import z, { ZodError } from "zod";
 
 import * as dotenv from "dotenv";
 import { fromZodError } from "zod-validation-error";
-dotenv.config();
+dotenv.config({ path: "../.env" });
 
 export const envSchema = z
   .object({

@@ -5,6 +5,8 @@ import { AppController } from "@/src/app.controller";
 import { AppService } from "@/src/app.service";
 import global_config from "@/config/global_config";
 import { BullModule } from "@nestjs/bull";
+import { PatientsModule } from './modules/patients/patients.module';
+import { DevAuthModule } from './modules/dev-auth/dev-auth.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { BullModule } from "@nestjs/bull";
       isGlobal: true,
       load: [global_config],
     }),
+    PatientsModule,
+    DevAuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
