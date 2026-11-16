@@ -142,6 +142,33 @@ export class PatientsService {
     return patient;
   }
 
+  async deleteProfileByUserId(userId: string): Promise<{ message: string }> {
+    return this.dataSource.transaction(async (manager) => {
+      const patientRepository = manager.getRepository(PatientProfile);
+      const patient = await patientRepository.findOne({
+        where: { userId },
+        lock: { mode: "pessimistic_write" },
+      });
+
+      if (!patient) {
+        throw new NotFoundException("Patient profile not found");
+      }
+
+      const appointmentCount = await manager
+        .getRepository(AppointmentEntity)
+        .count({ where: { patientId: patient.id } });
+
+      if (appointmentCount > 0) {
+        throw new ConflictException(
+          "Patient profile cannot be deleted while appointment records exist",
+        );
+      }
+
+      await patientRepository.remove(patient);
+      return { message: "Patient profile deleted successfully" };
+    });
+  }
+
   async updateByUserId(
     userId: string,
     updatePatientProfileDto: UpdatePatientProfileDto,

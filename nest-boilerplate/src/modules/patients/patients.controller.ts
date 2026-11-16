@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Patch,
   Param,
@@ -40,6 +41,13 @@ export class PatientsController {
     return this.patientsService.updateByUserId(
       this.getAuthenticatedUserId(request),
       updatePatientProfileDto,
+    );
+  }
+
+  @Delete("me")
+  deleteMyProfile(@Req() request: IRequest) {
+    return this.patientsService.deleteProfileByUserId(
+      this.getAuthenticatedUserId(request),
     );
   }
 
