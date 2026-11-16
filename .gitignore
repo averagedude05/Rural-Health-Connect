@@ -407,6 +407,5 @@ dist
 /src/modules/appointments/
 /src/modules/clinic/
 /src/modules/doctor/
-/src/modules/medical-record/
 /src/modules/patient/
 /src/modules/user/
