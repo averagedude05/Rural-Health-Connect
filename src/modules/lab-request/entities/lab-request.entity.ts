@@ -8,22 +8,22 @@ export class LabRequest {
     @PrimaryGeneratedColumn("uuid")
     id!:string;
 
-    @Column({type:"uuid"})
+    @Column()
     patient_id!:string;
 
     @ManyToOne(() => PatientProfile)
     @JoinColumn({name:"patient_id"})
     patient!:PatientProfile;
 
-    @Column({type:"uuid"})
+    @Column()
     doctor_id!:string;
 
     @ManyToOne(() => DoctorProfile)
     @JoinColumn({name:"doctor_id"})
     doctor!:DoctorProfile;
 
-    @Column({type:"uuid"})
-    technician_id!:string;
+    @Column({ nullable: true })
+    technician_id?:string;
 
     @ManyToOne(() => TechnicianProfile, { nullable: true })
     @JoinColumn({name:"technician_id"})

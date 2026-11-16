@@ -1,11 +1,12 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository } from "typeorm";
 import { LabRequest } from "./entities/lab-request.entity";
-import { Injectable, NotFoundException, Param } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException, Param } from "@nestjs/common";
 import { PatientProfile } from "@/modules/patient/entities/patient.entity";
 import { DoctorProfile } from "@/modules/doctor/entities/doctor.entity";
 import { TechnicianProfile } from "@/modules/technician/entities/technician.entity";
 import { CreateLabRequestDto, UpdateLabRequestDto } from "./dto/lab-request.dto";
+
 
 
 
@@ -33,7 +34,7 @@ async getAllRequests(){
 
 async getLabRequest( id:string){
     try{
-        const requests=this.labrequestRepository.findOne({where: { id: id }});
+        const requests= await this.labrequestRepository.findOne({where: { id: id }});
         if(!requests){
             throw new NotFoundException("Request not found");
         }
@@ -66,11 +67,24 @@ async createLabRequest(dto:CreateLabRequestDto, doctorId:string){
         throw error;
     }
     }
-    async updateLabRequest(id: string, dto: UpdateLabRequestDto){
+    async updateLabRequest(id: string, dto: UpdateLabRequestDto, reqid: string, role: string){
         try{
             const updateLabRequest = await this.labrequestRepository.findOne({ where: { id:id } });
             if (!updateLabRequest) {
                 throw new NotFoundException("Lab request with ID not found");
+            }
+            if (role === "DOCTOR") {
+                if ( updateLabRequest.doctor_id !== reqid) {
+                    throw new ForbiddenException("Cancel only created request");
+                }
+                if (dto.status !== "CANCELLED") {
+                    throw new ForbiddenException("Only cancel is allowed");
+                }
+            }
+            else if (role === "ADMIN"||role==="LAB_TECHNICIAN") {
+                if (dto.status === "CANCELLED") {
+                    throw new ForbiddenException("Only doctors can cancel");
+                }
             }
             if(dto.technician_id){
                 const technician = await this.technicianRepository.findOne({where: { id: dto.technician_id }});
@@ -78,7 +92,7 @@ async createLabRequest(dto:CreateLabRequestDto, doctorId:string){
                 throw new NotFoundException("Techinician not found");
             }
             }
-            return await this.labrequestRepository.update({id:id},dto);
+            return await this.labrequestRepository.update({ id:id },dto);
         }
         catch(error){
             throw error;
