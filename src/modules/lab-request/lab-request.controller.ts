@@ -45,7 +45,7 @@ export class LabRequestController {
 
     @Patch(":id")
     @UseGuards(JwtGuard, RolesGuard)
-    @Roles(Role.DOCTOR)
+    @Roles(Role.DOCTOR, Role.CLINIC_ADMIN, Role.LAB_TECHNICIAN)
     async updateLabRequest(@Param("id") id: string, @Body() dto: UpdateLabRequestDto,@Req() req:any) {//@Req() req
         return await this.LabRequestService.updateLabRequest(id, dto,req.user.id, req.user.roles);
     }
