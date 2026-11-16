@@ -1,3 +1,4 @@
+
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { PostgresDatabaseProviderModule } from "@/providers/database/postgres/provider.module";
@@ -7,12 +8,14 @@ import global_config from "@/config/global_config";
 import { BullModule } from "@nestjs/bull";
 import { DoctorsModule } from "@/modules/doctors/doctors.module";
 import { AuthModule } from "@/modules/auth/auth.module";
+import { PrescriptionsModule } from "@/modules/prescriptions/prescriptions.module";
 
 @Module({
   imports: [
     PostgresDatabaseProviderModule,
     AuthModule,
     DoctorsModule,
+    PrescriptionsModule,
 
     ConfigModule.forRoot({
       isGlobal: true,
