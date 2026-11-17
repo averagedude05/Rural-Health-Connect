@@ -13,21 +13,24 @@ import {
 } from "@nestjs/common";
 import { isUUID } from "class-validator";
 
-import { JwtGuard } from "@/common/guard/jwt.guard";
-import { IRequest } from "@/common/interfaces/request.interface";
+import { AccessTokenGuard } from "@/modules/access/access-token.guard";
+import { Request } from "express";
 
 import { UpdatePatientProfileDto } from "./dto/update-patient-profile.dto";
 import { PatientsService } from "./patients.service";
 import { CreateAppointmentDto } from "./dto/create-appointment.dto";
 import { UpdateAppointmentDto } from "./dto/update-appointment.dto";
 
+interface PatientAuthRequest extends Request {
+  user?: { sub: string; role: string };
+}
 @Controller("patients")
-@UseGuards(JwtGuard)
+@UseGuards(AccessTokenGuard)
 export class PatientsController {
   constructor(private readonly patientsService: PatientsService) {}
 
   @Get("me")
-  getMyProfile(@Req() request: IRequest) {
+  getMyProfile(@Req() request: PatientAuthRequest) {
     return this.patientsService.findByUserId(
       this.getAuthenticatedUserId(request),
     );
@@ -35,7 +38,7 @@ export class PatientsController {
 
   @Patch("me")
   updateMyProfile(
-    @Req() request: IRequest,
+    @Req() request: PatientAuthRequest,
     @Body() updatePatientProfileDto: UpdatePatientProfileDto,
   ) {
     return this.patientsService.updateByUserId(
@@ -45,7 +48,7 @@ export class PatientsController {
   }
 
   @Delete("me")
-  deleteMyProfile(@Req() request: IRequest) {
+  deleteMyProfile(@Req() request: PatientAuthRequest) {
     return this.patientsService.deleteProfileByUserId(
       this.getAuthenticatedUserId(request),
     );
@@ -53,7 +56,7 @@ export class PatientsController {
 
   @Post("appointments")
   bookAppointment(
-    @Req() request: IRequest,
+    @Req() request: PatientAuthRequest,
     @Body() createAppointmentDto: CreateAppointmentDto,
   ) {
     return this.patientsService.bookAppointment(
@@ -63,7 +66,7 @@ export class PatientsController {
   }
 
   @Get("appointments")
-  getMyAppointments(@Req() request: IRequest) {
+  getMyAppointments(@Req() request: PatientAuthRequest) {
     return this.patientsService.getAppointmentsByUserId(
       this.getAuthenticatedUserId(request),
     );
@@ -71,7 +74,7 @@ export class PatientsController {
 
   @Patch("appointments/:id")
   updateAppointment(
-    @Req() request: IRequest,
+    @Req() request: PatientAuthRequest,
     @Param("id", ParseUUIDPipe) appointmentId: string,
     @Body() updateAppointmentDto: UpdateAppointmentDto,
   ) {
@@ -84,7 +87,7 @@ export class PatientsController {
 
   @Patch("appointments/:id/cancel")
   cancelAppointment(
-    @Req() request: IRequest,
+    @Req() request: PatientAuthRequest,
     @Param("id", ParseUUIDPipe) appointmentId: string,
   ) {
     return this.patientsService.cancelAppointment(
@@ -94,14 +97,14 @@ export class PatientsController {
   }
 
   @Get("dashboard")
-  getDashboard(@Req() request: IRequest) {
+  getDashboard(@Req() request: PatientAuthRequest) {
     return this.patientsService.getDashboardByUserId(
       this.getAuthenticatedUserId(request),
     );
   }
 
-  private getAuthenticatedUserId(request: IRequest): string {
-    const userId = request.user?.id;
+  private getAuthenticatedUserId(request: PatientAuthRequest): string {
+    const userId = request.user?.sub;
 
     if (!userId || !isUUID(userId)) {
       throw new UnauthorizedException("Invalid authenticated user");

@@ -11,9 +11,16 @@ import { PatientsService } from "./patients.service";
 import { DoctorsController } from "./doctors.controller";
 import { DoctorAvailabilityEntity } from "./entities/doctor-availability.entity";
 import { AppointmentEntity } from "./entities/appointment.entity";
-
+import { AccessModule } from "@/modules/access/access.module";
+import { JwtModule } from "@nestjs/jwt";
+import { appConfig } from "@/config/app.config";
+import { AccessTokenGuard } from "@/modules/access/access-token.guard";
 @Module({
   imports: [
+    JwtModule.register({
+  secret: appConfig.env.JWT_BEARER_SECRET,
+  signOptions: { expiresIn: appConfig.env.JWT_TTL },
+}),
     TypeOrmModule.forFeature([
       PatientProfile,
       Clinic,
@@ -24,7 +31,7 @@ import { AppointmentEntity } from "./entities/appointment.entity";
     ]),
   ],
   controllers: [PatientsController, ClinicsController, DoctorsController],
-  providers: [PatientsService],
+  providers: [PatientsService, AccessTokenGuard],
   exports: [PatientsService],
 })
 export class PatientsModule {}

@@ -4,7 +4,8 @@ import { SearchDoctorsDto } from "./dto/search-doctors.dto";
 import { SearchDoctorAvailabilityDto } from "./dto/search-doctor-availability.dto";
 
 
-@Controller("doctors")
+
+@Controller("doctor")
 export class DoctorsController {
   constructor(private readonly patientsService: PatientsService) {}
 
