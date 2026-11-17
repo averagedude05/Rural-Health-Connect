@@ -11,10 +11,10 @@ import {
 } from "@nestjs/common";
 import { LabRequestService } from "./lab-request.service";
 import {CreateLabRequestDto,UpdateLabRequestDto} from "./dto/lab-request.dto";
-import { RolesGuard } from "@/src/common/guard/roles.guard";
+import { RolesGuard } from "@/common/guard/roles.guard";
 import { JwtGuard } from "@/src/common/guard/jwt.guard";
-import { Role } from "@/src/common/enums/role.enum"; 
-import { Roles } from "@/src/common/decorators";
+import { Role } from "@/common/enums/role.enum"; 
+import { Roles } from "@/common/decorators/roles.decorator";
 import { Request } from "express";
 
 @Controller("lab-requests")
@@ -23,14 +23,14 @@ export class LabRequestController {
 
     @Get()
     @UseGuards(JwtGuard, RolesGuard)
-    @Roles(Role.CLINIC_ADMIN, Role.DOCTOR, Role.LAB_TECHNICIAN)
+    @Roles(Role.ADMIN, Role.DOCTOR, Role.LAB_TECHNICIAN)
     async getAllLabRequests() {
         return await this.LabRequestService.getAllRequests();
     }
 
     @Get(":id")
     @UseGuards(JwtGuard, RolesGuard)
-    @Roles(Role.CLINIC_ADMIN, Role.DOCTOR, Role.LAB_TECHNICIAN)
+    @Roles(Role.ADMIN, Role.DOCTOR, Role.LAB_TECHNICIAN)
     async getLabRequest(@Param("id") id: string) {
         return await this.LabRequestService.getLabRequest(id);
     }
@@ -45,14 +45,12 @@ export class LabRequestController {
 
     @Patch(":id")
     @UseGuards(JwtGuard, RolesGuard)
-    @Roles(Role.DOCTOR, Role.CLINIC_ADMIN, Role.LAB_TECHNICIAN)
+    @Roles(Role.DOCTOR, Role.ADMIN, Role.LAB_TECHNICIAN)
     async updateLabRequest(@Param("id") id: string, @Body() dto: UpdateLabRequestDto,@Req() req:any) {//@Req() req
         return await this.LabRequestService.updateLabRequest(id, dto,req.user.id, req.user.roles);
     }
 
     @Delete(":id")
-    @UseGuards(JwtGuard, RolesGuard)
-    @Roles(Role.CLINIC_ADMIN)
     async deleteLabRequest(@Param("id") id: string) {
         return await this.LabRequestService.deleteRequest(id);
     }

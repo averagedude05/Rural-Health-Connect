@@ -10,10 +10,10 @@ import {
 } from "@nestjs/common";
 import { MedicalRecordService } from "./medical-record.service";
 import { CreateMedicalRecordDto, UpdateMedicalRecordDto } from "./dto/medical-record.dto";
-import { Roles } from "@/src/common/decorators";
-import { Role } from "@/src/common/enums/role.enum";
-import { RolesGuard } from "@/src/common/guard/roles.guard";
-import { JwtGuard } from "@/src/common/guard/jwt.guard";
+import { Roles } from "@/common/decorators/roles.decorator";
+import { Role } from "@/common/enums/role.enum";
+import { RolesGuard } from "@/common/guard/roles.guard";
+import { JwtGuard } from "@/common/guard/jwt.guard";
 
 @Controller("medical-records")
 export class MedicalRecordController {

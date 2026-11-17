@@ -2,8 +2,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository } from "typeorm";
 import { LabRequest } from "./entities/lab-request.entity";
 import { ForbiddenException, Injectable, NotFoundException, Param } from "@nestjs/common";
-import { PatientProfile } from "@/modules/patient/entities/patient.entity";
-import { DoctorProfile } from "@/modules/doctor/entities/doctor.entity";
+import { PatientProfile } from "@/modules/patients/entities/patient-profile.entity";
+import { DoctorProfile } from "@/modules/doctors/entities/doctor-profile.entity";
 import { TechnicianProfile } from "@/modules/technician/entities/technician.entity";
 import { CreateLabRequestDto, UpdateLabRequestDto } from "./dto/lab-request.dto";
 import { Role } from "@/src/common/enums/role.enum";
@@ -82,7 +82,7 @@ async createLabRequest(dto:CreateLabRequestDto, doctorId:string){
                     throw new ForbiddenException("Only cancel is allowed");
                 }
             }
-            else if (roles.includes(Role.CLINIC_ADMIN) || roles.includes(Role.LAB_TECHNICIAN)) {
+            else if (roles.includes(Role.ADMIN) || roles.includes(Role.LAB_TECHNICIAN)) {
                 if (dto.status === "CANCELLED") {
                     throw new ForbiddenException("Only doctors can cancel");
                 }

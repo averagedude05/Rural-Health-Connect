@@ -2,9 +2,9 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { MedicalRecord } from "./entities/medical-record.entity";
-import { PatientProfile } from "../patient/entities/patient.entity";
-import { DoctorProfile } from "../doctor/entities/doctor.entity";
-import { Clinic } from "../clinic/entities/clinic.entity";
+import { PatientProfile } from "@/modules/patients/entities/patient-profile.entity";
+import { DoctorProfile } from "@/modules/doctors/entities/doctor-profile.entity";
+import { Clinic } from "@/modules/patients/entities/clinic.entity";
 import { CreateMedicalRecordDto, UpdateMedicalRecordDto } from "./dto/medical-record.dto";
 
 

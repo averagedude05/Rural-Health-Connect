@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
-import { PatientProfile } from "../../patient/entities/patient.entity";
-import { DoctorProfile } from "../../doctor/entities/doctor.entity";
-import { Clinic } from "../../clinic/entities/clinic.entity";
+import { PatientProfile } from "@/modules/patients/entities/patient-profile.entity";
+import { DoctorProfile } from "@/modules/doctors/entities/doctor-profile.entity";
+import { Clinic } from "@/modules/patients/entities/clinic.entity";
 
 @Entity("medical_records")
 export class MedicalRecord {
@@ -33,16 +33,16 @@ export class MedicalRecord {
     visit_date!: Date;
 
     @Column({ nullable: true })
-    notes!: string;
+    notes?: string;
 
-    @Column({ type: "enum",enum: ["PRIVATE", "SHARED"],default: "PRIVATE"})
+    @Column({ type: "enum",enum: ["PRIVATE", "SHARED"], enumName: "medical_record_access_status_enum",default: "PRIVATE"})
     access_status!: string;
 
-    @Column({ nullable: true })
+    @Column({ type: "jsonb",nullable: true })
     medicine_details!: Record<string,string>;
 
     @Column({ nullable: true })
-    prescription_instructions!: string;
+    prescription_instructions?: string;
 
     @CreateDateColumn()
     prescription_created_at!: Date;
