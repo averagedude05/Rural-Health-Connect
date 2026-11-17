@@ -9,7 +9,6 @@ import {
 
 export class CreateRuralHealthConnectTables1794594703000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
     await queryRunner.createTable(
       new Table({
         name: "users",
@@ -552,55 +551,9 @@ export class CreateRuralHealthConnectTables1794594703000 implements MigrationInt
         ],
       }),
     );
-    await queryRunner.createTable(
-      new Table({
-        name: "clinic_admin_assignments",
-        columns: [
-          {
-            name: "id",
-            type: "uuid",
-            isPrimary: true,
-            isGenerated: true,
-            generationStrategy: "uuid",
-            default: "uuid_generate_v4()",
-          },
-          { name: "user_id", type: "uuid", isNullable: false },
-          { name: "clinic_id", type: "uuid", isNullable: false },
-          {
-            name: "created_at",
-            type: "timestamp",
-            isNullable: false,
-            default: "now()",
-          },
-        ],
-        uniques: [
-          new TableUnique({
-            name: "UQ_clinic_admin_assignments_user_clinic",
-            columnNames: ["user_id", "clinic_id"],
-          }),
-        ],
-        foreignKeys: [
-          new TableForeignKey({
-            name: "FK_clinic_admin_assignments_user_id",
-            columnNames: ["user_id"],
-            referencedTableName: "users",
-            referencedColumnNames: ["id"],
-            onDelete: "CASCADE",
-          }),
-          new TableForeignKey({
-            name: "FK_clinic_admin_assignments_clinic_id",
-            columnNames: ["clinic_id"],
-            referencedTableName: "clinics",
-            referencedColumnNames: ["id"],
-            onDelete: "CASCADE",
-          }),
-        ],
-      }),
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable("clinic_admin_assignments");
     await queryRunner.dropTable("emergency_requests");
     await queryRunner.dropTable("lab_requests");
     await queryRunner.dropTable("medical_records");
@@ -615,4 +568,3 @@ export class CreateRuralHealthConnectTables1794594703000 implements MigrationInt
     await queryRunner.dropTable("users");
   }
 }
-
