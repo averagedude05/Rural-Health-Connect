@@ -10,10 +10,6 @@ import {
 } from "@nestjs/common";
 import { TechnicianService } from "./technician.service";
 import { CreateTechnicianDto, UpdateTechnicianDto } from "./dto/technician.dto";
-import { Roles } from "@/common/decorators/roles.decorator";
-import { Role } from "@/common/enums/role.enum";
-import { RolesGuard } from "@/common/guard/roles.guard";
-import { JwtGuard } from "@/common/guard/jwt.guard";
 import { AdminAuthGuard } from "@/modules/auth/guards/admin-auth.guard";
 
 @Controller("technicians") 

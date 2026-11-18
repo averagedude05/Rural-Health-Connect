@@ -5,6 +5,7 @@ import { TechnicianProfile } from "./entities/technician.entity";
 import { User } from "@/modules/users/entities/user.entity";
 import { Clinic } from "@/modules/patients/entities/clinic.entity";
 import { CreateTechnicianDto, UpdateTechnicianDto } from "./dto/technician.dto";
+import argon2 from "argon2";
 
 @Injectable()
 export class TechnicianService {
@@ -86,5 +87,21 @@ export class TechnicianService {
             throw error;
         }
     }
+
+    async checkTechnicianByPhone(phone: string): Promise<TechnicianProfile | null> {
+        const technician = await this.technicianRepository.findOne({where: { phone: phone.trim() },relations: ["user", "clinic"]});
+        if (!technician) {
+            return null;
+        }
+
+        return technician;
+    }
+    async validateTechnician(user:User, password:string):Promise<boolean>{
+        const passwordMatches = await argon2.verify(user.passwordHash, password);
+        if (!passwordMatches) {
+            return false;
+        }
+        return true;
+    }   
 
 }
