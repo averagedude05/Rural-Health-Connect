@@ -409,3 +409,4 @@ dist
 /src/modules/doctor/
 /src/modules/patient/
 /src/modules/user/
+/src/modules/admin/
