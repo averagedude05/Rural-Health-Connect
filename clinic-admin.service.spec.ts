@@ -1,25 +1,80 @@
-import { NotFoundException } from "@nestjs/common";
-import { ClinicAdminService } from "../../src/modules/clinic-admin/clinic-admin.service";
+/// <reference types="jest" />
+import { BadRequestException, NotFoundException } from "@nestjs/common";
+import { ClinicAdminService } from "./clinic-admin.service";
 
 describe("ClinicAdminService", () => {
-  const dataSource = { query: jest.fn() };
   let service: ClinicAdminService;
+  let clinics: Record<string, jest.Mock>;
+  let services: Record<string, jest.Mock>;
+  let clinic: any;
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    service = new ClinicAdminService(dataSource as never);
+    clinic = {
+      id: "c1",
+      name: "A",
+      address: "x",
+      location: null,
+      contactNumber: "017",
+      description: null,
+      status: "ACTIVE",
+    };
+    clinics = {
+      find: jest.fn().mockResolvedValue([clinic]),
+      findOne: jest.fn().mockResolvedValue(clinic),
+      save: jest.fn().mockImplementation(async (c) => c),
+      create: jest.fn().mockImplementation((c) => ({ id: "new", ...c })),
+    };
+    services = {
+      find: jest.fn().mockResolvedValue([]),
+      findOne: jest.fn().mockResolvedValue({
+        id: "s1",
+        clinicId: "c1",
+        serviceName: "X-Ray",
+        availabilityStatus: "AVAILABLE",
+      }),
+      save: jest.fn().mockImplementation(async (s) => s),
+      create: jest.fn().mockImplementation((s) => ({ id: "s-new", ...s })),
+      remove: jest.fn(),
+    };
+    service = new ClinicAdminService(clinics as any, services as any);
   });
 
-  it("returns clinic dashboard aggregates", async () => {
-    dataSource.query.mockResolvedValueOnce([{ id: "clinic-1", name: "Rural Clinic" }]).mockResolvedValueOnce([{ total: 8, requested: 2, approved: 3, completed: 3 }]).mockResolvedValueOnce([{ total: 4 }]).mockResolvedValueOnce([{ total: 5, available: 4 }]);
-    const result = await service.dashboard("clinic-1");
-    expect(result.appointments.total).toBe(8);
-    expect(result.doctors.total).toBe(4);
-    expect(result.services.available).toBe(4);
+  it("creates clinics as ACTIVE", async () => {
+    const created = await service.createClinic({
+      name: "B",
+      address: "y",
+      contactNumber: "018",
+    });
+    expect(created.status).toBe("ACTIVE");
+    expect(created.location).toBeNull();
   });
 
-  it("rejects updates for unknown clinic services", async () => {
-    dataSource.query.mockResolvedValue([]);
-    await expect(service.updateService("clinic-1", "service-1", { availabilityStatus: "UNAVAILABLE" })).rejects.toBeInstanceOf(NotFoundException);
+  it("returns 404 for a missing clinic", async () => {
+    clinics.findOne.mockResolvedValue(null);
+    await expect(service.getClinic("nope")).rejects.toThrow(NotFoundException);
+  });
+
+  it("refuses an empty clinic update", async () => {
+    await expect(service.updateClinic("c1", {})).rejects.toThrow(
+      BadRequestException,
+    );
+  });
+
+  it("delete is a soft delete (INACTIVE)", async () => {
+    expect((await service.deleteClinic("c1")).status).toBe("INACTIVE");
+  });
+
+  it("services are always looked up inside their own clinic", async () => {
+    await service.getServiceForClinic("c1", "s1");
+    expect(services.findOne).toHaveBeenCalledWith({
+      where: { id: "s1", clinicId: "c1" },
+    });
+  });
+
+  it("deleting a service removes it for real", async () => {
+    await service.deleteServiceForClinic("c1", "s1");
+    expect(services.remove).toHaveBeenCalled();
   });
 });
+
+
