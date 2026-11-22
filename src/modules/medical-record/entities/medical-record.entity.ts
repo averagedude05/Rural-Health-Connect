@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { PatientProfile } from "@/modules/patients/entities/patient-profile.entity";
 import { DoctorProfile } from "@/modules/doctors/entities/doctor-profile.entity";
-import { Clinic } from "@/modules/patients/entities/clinic.entity";
+import { Clinic } from "@/modules/clinic/entities/clinic.entity";
 
 @Entity("medical_records")
 export class MedicalRecord {

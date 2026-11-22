@@ -1,18 +1,21 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException, Req } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { TechnicianProfile } from "./entities/technician.entity";
-// import { User } from "@/modules/users/entities/user.entity";
-// import { Clinic } from "@/modules/patients/entities/clinic.entity";
+ import { Clinic } from "@/modules/clinic/entities/clinic.entity";
 import { CreateTechnicianDto, UpdateTechnicianDto } from "./dto/technician.dto";
 import argon2 from "argon2";
+import { User } from "@/modules/users/entities/user.entity";
+import { CreateUserDto } from "@/modules/users/dto/user.dto";
+import { Role } from "@/src/common/enums/role.enum";
+import { LabRequest } from "../lab-request/entities/lab-request.entity";
 
 @Injectable()
 export class TechnicianService {
     constructor(
         @InjectRepository(TechnicianProfile) private readonly technicianRepository: Repository<TechnicianProfile>,
         @InjectRepository(User) private readonly userRepository: Repository<User>,
-        @InjectRepository(Clinic) private readonly clinicRepository: Repository<Clinic>,
+        @InjectRepository(Clinic) private readonly clinicRepository: Repository<Clinic>
     ) {}
 
     async getAllTechnician() {
@@ -42,7 +45,9 @@ export class TechnicianService {
             if (!user) {
                 throw new NotFoundException("User not found");
             }
-
+            if(user.role !== Role.LAB_TECHNICIAN){
+                throw new NotFoundException("User not a lab technician");
+            }
             const clinic = await this.clinicRepository.findOne({ where: { id: dto.clinic_id } });
             if (!clinic) {
                 throw new NotFoundException("Clinic not found");
@@ -87,21 +92,4 @@ export class TechnicianService {
             throw error;
         }
     }
-
-    async checkTechnicianByPhone(phone: string): Promise<TechnicianProfile | null> {
-        const technician = await this.technicianRepository.findOne({where: { phone: phone.trim() },relations: ["user", "clinic"]});
-        if (!technician) {
-            return null;
-        }
-
-        return technician;
-    }
-    async validateTechnician(user:User, password:string):Promise<boolean>{
-        const passwordMatches = await argon2.verify(user.passwordHash, password);
-        if (!passwordMatches) {
-            return false;
-        }
-        return true;
-    }   
-
 }

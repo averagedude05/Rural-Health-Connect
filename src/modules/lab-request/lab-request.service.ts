@@ -1,16 +1,12 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository } from "typeorm";
 import { LabRequest } from "./entities/lab-request.entity";
-import { ForbiddenException, Injectable, NotFoundException, Param } from "@nestjs/common";
-import { PatientProfile } from "@/modules/patients/entities/patient-profile.entity";
+import { ForbiddenException, Injectable, NotFoundException, Param, Req } from "@nestjs/common";
+import { PatientProfile } from "@/src/modules/patients/entities/patient-profile.entity";
 import { DoctorProfile } from "@/modules/doctors/entities/doctor-profile.entity";
 import { TechnicianProfile } from "@/modules/technician/entities/technician.entity";
 import { CreateLabRequestDto, UpdateLabRequestDto } from "./dto/lab-request.dto";
 import { Role } from "@/src/common/enums/role.enum";
-
-
-
-
 
 
 @Injectable()
@@ -35,7 +31,7 @@ async getAllRequests(){
 
 async getLabRequest( id:string){
     try{
-        const requests= await this.labrequestRepository.findOne({where: { id: id }});
+        const requests= await this.labrequestRepository.findOne({where: { id: id },relations: { technician: true }});
         if(!requests){
             throw new NotFoundException("Request not found");
         }
@@ -93,7 +89,12 @@ async createLabRequest(dto:CreateLabRequestDto, doctorId:string){
                 throw new NotFoundException("Techinician not found");
             }
             }
-            return await this.labrequestRepository.update({ id:id },dto);
+            await this.labrequestRepository.update({ id:id },dto);
+            const showupdatedRequest = await this.labrequestRepository.findOne({where: { id:id },relations: { technician: true }});
+            if (!showupdatedRequest) {
+                throw new NotFoundException("Request not found");
+            }
+            return showupdatedRequest;
         }
         catch(error){
             throw error;
@@ -113,7 +114,41 @@ async createLabRequest(dto:CreateLabRequestDto, doctorId:string){
         }
 
     }
+    async getAssinedRequests(userId: string) {
+            const technician = await this.technicianRepository.findOne({where: { user_id: userId }});
 
+            if (!technician) {
+                throw new NotFoundException("Technician not found");
+            }
+            return this.labrequestRepository.find({ where: { technician_id: technician.id }, relations: ["technician", "patient", "doctor"] });
+    }
+
+    async updateAssigned(userId: string, id: string, dto: UpdateLabRequestDto){
+         const technician = await this.technicianRepository.findOne({where: { user_id: userId }});
+        if(!technician){
+            throw new NotFoundException("Technician not found");
+        }
+        const update=await this.labrequestRepository.findOne({ where: { id:id, technician_id:technician.id } });
+        if(!update){
+            throw new NotFoundException("Request not found");
+        }
+        await this.labrequestRepository.update({ id:id },dto);
+        const updatedRequest = await this.labrequestRepository.findOne({
+            where: { id },
+            relations: { technician: true },
+        });
+        if (!updatedRequest) {
+            throw new NotFoundException("Request not found");
+        }
+        return updatedRequest;
+    }
+    async seeownreports(userId: string) {
+        const patient = await this.patientRepository.findOne({ where: { userId: userId } });
+        if (!patient) {
+            throw new NotFoundException("Patient not found");
+        }
+        return this.labrequestRepository.find({ where: { patient_id: patient.id }, relations: ["patient"]});
+    }
 }
 
 

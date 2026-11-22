@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "@/modules/users/entities/user.entity";
-import { Clinic } from "@/modules/patients/entities/clinic.entity";
+import { Clinic } from "@/modules/clinic/entities/clinic.entity";
 
 @Entity("lab_technician_profiles")
 export class TechnicianProfile{
